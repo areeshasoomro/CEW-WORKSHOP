@@ -1,0 +1,393 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Contact {
+    char name[50];
+    char email[50];
+    char phone[15];
+};
+void addContact(struct Contact **addressBook, int *numContacts) {
+    (*numContacts)++;
+    *addressBook = realloc(*addressBook, (*numContacts) * sizeof(struct Contact));
+    printf("Enter Name: ");
+    scanf("%s", (*addressBook)[*numContacts - 1].name);
+    printf("Enter Email: ");
+    scanf("%s", (*addressBook)[*numContacts - 1].email);
+    printf("Enter Phone: ");
+    scanf("%s", (*addressBook)[*numContacts - 1].phone);
+    printf("Contact added successfully!\n");
+}
+void deleteContact(struct Contact **addressBook, int *numContacts) {
+    if (*numContacts == 0) {
+        printf("Address book is empty. No contacts to delete.\n");
+        return;
+    }
+    printf("Enter the index of the contact to delete: ");
+    int index;
+    scanf("%d", &index);
+    if (index < 1 || index > *numContacts) {
+        printf("Invalid index. No contact deleted.\n");
+        return;
+    }
+    (*numContacts)--;
+    for (int i = index - 1; i < *numContacts; i++)
+        (*addressBook)[i] = (*addressBook)[i + 1];
+    *addressBook = realloc(*addressBook, (*numContacts) * sizeof(struct Contact));
+    printf("Contact deleted successfully!\n");
+}
+
+void displayContacts(struct Contact *addressBook, int numContacts) {
+    if (numContacts == 0)
+        printf("Address book is empty.\n");
+    else {
+        printf("Contacts:\n");
+        for (int i = 0; i < numContacts; i++)
+            printf("%d. Name: %s, Email: %s, Phone: %s\n", i + 1,
+                   addressBook[i].name, addressBook[i].email, addressBook[i].phone);
+    }
+}
+
+int main() {
+    struct Contact *addressBook = NULL;
+    int numContacts = 0;
+    int choice;
+
+    do {
+        printf("\nAddress Book Menu:\n1. Add Contact\n2. Delete Contact\n3. Display Contacts\n4. Quit\nEnter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                addContact(&addressBook, &numContacts);
+                break;
+            case 2:
+                deleteContact(&addressBook, &numContacts);
+                break;
+            case 3:
+                displayContacts(addressBook, numContacts);
+                break;
+            case 4:
+                free(addressBook);
+                printf("Exiting the program. Memory freed.\n");
+                break;
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+    } while (choice != 4);
+
+    return 0;
+}
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int data;
+    struct Node* next;
+};
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->next = NULL;
+    return newNode;
+}
+struct Node* createLinkedList(int values[], int size) {
+    if (size == 0) {
+        return NULL;
+    }
+    struct Node* head = createNode(values[0]);
+    struct Node* current = head;
+    for (int i = 1; i < size; ++i) {
+        current->next = createNode(values[i]);
+        current = current->next;
+    }
+    return head;
+}
+void printList(struct Node* head) {
+    while (head != NULL) {
+        printf("%d -> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+struct Node* mergeSortedLists(struct Node* list1, struct Node* list2) {
+}
+int main() {
+    // Example lists
+    int values1[] = {1, 2, 3};
+    int values2[] = {4, 5, 6};
+    struct Node* list1 = createLinkedList(values1, sizeof(values1) / sizeof(values1[0]));
+    struct Node* list2 = createLinkedList(values2, sizeof(values2) / sizeof(values2[0]));
+    struct Node* mergedList = mergeSortedLists(list1, list2);
+    printf("Merged List: ");
+    printList(mergedList);
+    free(list1);
+    free(list2);
+    free(mergedList);
+
+    return 0;
+}
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int data;
+    struct Node* next;
+};
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->next = NULL;
+    return newNode;
+}
+void insertEnd(struct Node** head, int value) {
+    struct Node* newNode = createNode(value);
+    if (*head == NULL)
+        *head = newNode;
+    else {
+        struct Node* temp = *head;
+        while (temp->next != NULL)
+            temp = temp->next;
+        temp->next = newNode;
+    }
+}
+int* linkedListToArray(struct Node* head, int* size) {
+    int count = 0;
+    struct Node* current = head;
+    while (current) {
+        count++;
+        current = current->next;
+    }
+    int* array = (int*)malloc(count * sizeof(int));
+    if (!array) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        exit(EXIT_FAILURE);
+    }
+    current = head;
+    for (int i = 0; i < count; i++) {
+        array[i] = current->data;
+        current = current->next;
+    }
+    *size = count;
+    return array;
+}
+void printArray(int* array, int size) {
+    printf("Array: ");
+    for (int i = 0; i < size; i++)
+        printf("%d ", array[i]);
+    printf("\n");
+}
+int main() {
+    struct Node* list = NULL;
+    insertEnd(&list, 1);
+    insertEnd(&list, 2);
+    insertEnd(&list, 3);
+    int size;
+    int* array = linkedListToArray(list, &size);
+    printArray(array, size);
+    free(array);
+    return 0;
+}
+
+
+#include <stdio.h>
+#include <stdlib.h>
+struct Node {
+    int data;
+    struct Node* next;
+};
+void removeOddIndices(struct Node** head) {
+    struct Node* current = *head;
+    while (current && current->next) {
+        struct Node* temp = current->next;
+        current->next = temp->next;
+        free(temp);
+        current = current->next;
+    }
+}
+int main() {
+    struct Node* list = NULL;
+    for (int i = 1; i <= 6; i++) {
+        struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data = i;
+        newNode->next = list;
+        list = newNode;
+    }
+    removeOddIndices(&list);
+    while (list) {
+        printf("%d -> ", list->data);
+        struct Node* temp = list;
+        list = list->next;
+        free(temp);
+    }
+    return 0;
+}
+
+
+
+
+#include <stdio.h>
+void addTaskToFile(const char* task) {
+    FILE *file = fopen("todo.txt", "a");
+    if (file == NULL) {
+        perror("Error opening file for appending");
+        return;
+    }
+    fprintf(file, "%s\n", task);
+    fclose(file);
+}
+void displayToDoList() {
+    FILE *file = fopen("todo.txt", "r");
+    if (file == NULL) {
+        perror("Error opening file for reading");
+        return;
+    }
+    printf("Current To-Do List:\n");
+    char task[1000];
+    while (fgets(task, sizeof(task), file) != NULL) {
+        printf("- %s", task);
+    }
+    fclose(file);
+}
+int main() {
+    int choice;
+    char task[1000];
+    do {
+        printf("\nTo-Do List Management\n");
+        printf("1. Add Task\n");
+        printf("2. View To-Do List\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the task: ");
+                getchar(); // Consume the newline character left in the buffer
+                //fgets is used to read a line of text from the standard input (stdin).
+                //The fgets function reads characters from the specified input stream
+                //until it encounters a newline character ('\n') or reaches the specified
+                //limit of characters
+                fgets(task, sizeof(task), stdin);
+                addTaskToFile(task);
+                printf("Task added to the to-do list.\n");
+                break;
+            case 2:
+                displayToDoList();
+                break;
+            case 3:
+                printf("Exiting program.\n");
+                break;
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+
+    } while (choice != 3);
+
+    return 0;
+}
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_NAME_LENGTH 50
+
+// Structure to represent a student record
+typedef struct {
+    char name[MAX_NAME_LENGTH];
+    int rollNumber;
+    float marks;
+} Student;
+
+// Function to add a student record to the file
+void addStudentToFile(const char *fileName, const Student *student) {
+    FILE *file = fopen(fileName, "a");
+
+    if (file == NULL) {
+        perror("Error opening file for appending");
+        exit(EXIT_FAILURE);
+    }
+
+    fprintf(file, "%s %d %.2f\n", student->name, student->rollNumber, student->marks);
+
+    fclose(file);
+}
+
+// Function to display the current student records from the file
+void displayStudentRecords(const char *fileName) {
+    FILE *file = fopen(fileName, "r");
+
+    if (file == NULL) {
+        perror("Error opening file for reading");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Student Records:\n");
+
+    Student student;
+    while (fscanf(file, "%s %d %f", student.name, &student.rollNumber, &student.marks) == 3) {
+        printf("Name: %s, Roll Number: %d, Marks: %.2f\n", student.name, student.rollNumber, student.marks);
+    }
+
+    fclose(file);
+}
+
+int main() {
+    const char *fileName = "students.txt";
+    Student student;
+    int choice;
+
+    do {
+        printf("\nStudent Record Management\n");
+        printf("1. Add Student\n");
+        printf("2. View Students\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter student name: ");
+                scanf("%s", student.name);
+                printf("Enter student roll number: ");
+                scanf("%d", &student.rollNumber);
+                printf("Enter student marks: ");
+                scanf("%f", &student.marks);
+
+                addStudentToFile(fileName, &student);
+                printf("Student record added.\n");
+                break;
+
+            case 2:
+                displayStudentRecords(fileName);
+                break;
+
+            case 3:
+                printf("Exiting program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+
+    } while (choice != 3);
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
